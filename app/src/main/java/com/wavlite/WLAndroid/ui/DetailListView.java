@@ -231,11 +231,13 @@ public class DetailListView extends BaseActivity {
                             AlertDialogFragment.problemWithYouTube(DetailListView.this);
 
                         } else if (YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(DetailListView.this).equals(YouTubeInitializationResult.SERVICE_VERSION_UPDATE_REQUIRED)){
+                            AlertDialogFragment.problemWithYouTube(DetailListView.this);
 
                         } else if(YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(DetailListView.this).equals(YouTubeInitializationResult.SERVICE_MISSING)){
+                            AlertDialogFragment.problemWithYouTube(DetailListView.this);
 
                         } else if (YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(DetailListView.this).equals(YouTubeInitializationResult.SERVICE_DISABLED)){
-
+                            AlertDialogFragment.problemWithYouTube(DetailListView.this);
                         }
 
                     }

@@ -22,6 +22,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.youtube.player.YouTubeApiServiceUtil;
+import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -43,6 +45,7 @@ public class SearchViewActivity extends BaseActivity {
     private ProgressBar mProgressBar;
     private ListView videosFound;
     private Handler handler;
+
 
     protected YoutubeConnector yc;
 
@@ -97,9 +100,14 @@ public class SearchViewActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkYTSearchInput();
+
     }  // onResume
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -114,7 +122,6 @@ public class SearchViewActivity extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
     }  // onOptionsItemSelected
-
 
     private void addItemToParseArray(int loc) {
         final String videoTitle = searchResults.get(loc).getTitle();
@@ -210,9 +217,30 @@ public class SearchViewActivity extends BaseActivity {
             videosFound.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
-                    List<String> vidIds = new DetailListView().convertSearchResultsToIntentIds(searchResults);
-                    Intent intent = YouTubeStandalonePlayer.createVideosIntent(SearchViewActivity.this, DeveloperKey.DEVELOPER_KEY, vidIds, pos, 10, true, true);
-                    startActivity(intent);
+
+                    if(YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(SearchViewActivity.this).equals(YouTubeInitializationResult.SUCCESS)){
+
+                        List<String> vidIds = new DetailListView().convertSearchResultsToIntentIds(searchResults);
+                        Intent intent = YouTubeStandalonePlayer.createVideosIntent(SearchViewActivity.this, DeveloperKey.DEVELOPER_KEY, vidIds, pos, 10, true, true);
+                        startActivity(intent);
+
+
+                    }else if (YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(SearchViewActivity.this).equals(YouTubeInitializationResult.SERVICE_INVALID)){
+                        AlertDialogFragment.problemWithYouTube(SearchViewActivity.this);
+                        Log.d("YT", "Service invalid");
+
+                    } else if (YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(SearchViewActivity.this).equals(YouTubeInitializationResult.SERVICE_VERSION_UPDATE_REQUIRED)){
+                        AlertDialogFragment.problemWithYouTube(SearchViewActivity.this);
+                        Log.d("YT", "Service version update required");
+
+                    } else if(YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(SearchViewActivity.this).equals(YouTubeInitializationResult.SERVICE_MISSING)){
+                        AlertDialogFragment.problemWithYouTube(SearchViewActivity.this);
+                        Log.d("YT", "Service missing");
+
+                    } else if (YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(SearchViewActivity.this).equals(YouTubeInitializationResult.SERVICE_DISABLED)){
+                        AlertDialogFragment.problemWithYouTube(SearchViewActivity.this);
+                        Log.d("YT", "Service disabled");
+                    }
                 }
             });
             videosFound.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

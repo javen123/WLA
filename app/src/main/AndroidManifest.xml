@@ -33,6 +33,7 @@
             android:label="@string/app_name" />
 
 
+
         <activity
             android:name="com.wavlite.WLAndroid.ui.MainActivity"
             android:label="@string/app_name"
